@@ -1,0 +1,19 @@
+                                       QUERY PLAN                                        
+-----------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=100.00..80930.22 rows=6068410 width=24)
+   ->  Foreign Scan  (cost=100.00..18.09 rows=2022803 width=24)
+ Optimizer: Postgres-based planner
+
+tpch10g=# explain select * from tab9 join tab10 on tab9.col0= tab10.col1;
+                                               QUERY PLAN                                               
+--------------------------------------------------------------------------------------------------------
+ Gather Motion 3:1  (slice1; segments: 3)  (cost=2961.58..191406.47 rows=6068410 width=24)
+   ->  Hash Join  (cost=2961.58..110494.34 rows=2022803 width=24)
+         Hash Cond: (tab10.col1 = tab9.col0)
+         ->  Redistribute Motion 3:3  (slice2; segments: 3)  (cost=100.00..3056.33 rows=25967 width=12)
+               Hash Key: tab10.col1
+               ->  Foreign Scan on tab10  (cost=100.00..2537.00 rows=25967 width=12)
+         ->  Hash  (cost=2537.00..2537.00 rows=25967 width=12)
+               ->  Foreign Scan on tab9  (cost=100.00..2537.00 rows=25967 width=12)
+ Optimizer: Postgres-based planner
+
